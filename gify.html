@@ -6,7 +6,10 @@
 <body>
 
 	<div class="bttnDiv"> </div>
-	<hr> <hr>
+	<hr> 
+	<input class="inputTxt"> 
+	<input type="button" class="addBttn" value="add a tag">
+	<hr>
 	<div class="gifDiv">  </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -26,18 +29,36 @@
 
 		// put button on screen using myArray
 		for (var i = 0; i < myArray.length; i++){
-			$(".bttnDiv").append("<button>" + myArray[i] + "</button")
+			$(".bttnDiv").append("<button>" + myArray[i] + "</button>")
 		}
+
+// ==========================================
+
+		// add more stuff to array
+
+		// when user clicks on add a tag
+		$(".addBttn").on('click',function(){
+
+			var addTag = $(".inputTxt").val().split(" ").join("+") 
+				//converts 'funny cat' --> 'funny+cat'
+			
+			myArray.push(addTag);
+
+			$(".bttnDiv").append("<button>" + addTag + "</button")
+		})
+
 
 // ==========================================
 
 
 
 		// onclick, change url name
-		$("button").on("click", function(){
+		$(".bttnDiv").on("click", "button", function(){
+
+			// get tag = cat, dog, funny
 			var tag = $(this).text();
 
-			// empty gifDiv
+			// empty gif Div
 			$(".gifDiv").empty();
 
 			// this is the dynamic url
