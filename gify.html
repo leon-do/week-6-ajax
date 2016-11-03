@@ -18,13 +18,15 @@
 				url: "http://api.giphy.com/v1/gifs/search?q=cat&api_key=dc6zaTOxFJmzC",  
 				method: "GET" 
 			} ).done(function(response) { 
-				
+
 				//makes 10 gifs
 				for (i = 0; i < 10; i++){
 
 					$(".gifDiv").append(
 						"<div class=imageAndRating>" +
-							"<img src=" + response.data[i].images.fixed_height_still.url + ">" +
+							"<img class=" + i + 
+							" data='off' " +
+							" src=" + response.data[i].images.fixed_height_still.url + ">" +
 							"<br>" +
 							"ratingg: " + response.data[i].rating +
 						"</div>" +
@@ -37,10 +39,39 @@
 
 
 
-		//on click
+		//on click to animate
 		$(".gifDiv").on("click","img",function(){
-			
 
+
+			// get class of clicked item. should be 0,1,2,3 etc
+			var classNum = $(this).attr('class');
+			
+			// toggle animation
+			$.ajax ( { 
+					url: "http://api.giphy.com/v1/gifs/search?q=cat&api_key=dc6zaTOxFJmzC",  
+					method: "GET" 
+				} ).done(function(response) { 
+
+
+					// if data is "off", then turn "on" and animate
+					if ($("." + classNum).attr("data") == "off"){
+						// turn data on
+						$("." + classNum).attr("data","on");
+						// animate
+						$("." + classNum).attr("src",response.data[classNum].images.fixed_height.url);
+					}
+
+
+					//if data is "on", then turn "off" and pause
+					else if ($("." + classNum).attr("data") == "on"){
+						// turn data off
+						$("." + classNum).attr("data","off");
+						// stop animation
+						$("." + classNum).attr("src",response.data[classNum].images.fixed_height_still.url);
+					}
+
+				})
+					
 
 		});//click
 
