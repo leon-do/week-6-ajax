@@ -18,7 +18,7 @@
 // ==========================================
 
 	// json link:  http://api.giphy.com/v1/gifs/search?q=funny+cat&api_key=dc6zaTOxFJmzC   
-
+	var myUrl;
 // ==========================================
 
 		//make array
@@ -57,7 +57,7 @@
 // ==========================================
 
 
-		// onclick, change url name
+		// onclick, change url name and update gif
 		$(".bttnDiv").on("click", "button", function(){
 
 			// empty gif Div
@@ -68,7 +68,7 @@
 
 
 			// this is the dynamic url
-			var myUrl = "http://api.giphy.com/v1/gifs/search?q=" + tag + "&api_key=dc6zaTOxFJmzC"
+			myUrl = "http://api.giphy.com/v1/gifs/search?q=" + tag + "&api_key=dc6zaTOxFJmzC"
 
 
 			// display still images
@@ -78,7 +78,7 @@
 				} ).done(function(response) { 
 
 					//makes 10 gifs
-					for (i = 0; i < 10; i++){
+					for (var i = 0; i < 10; i++){
 
 						// append gifs
 						$(".gifDiv").append(
@@ -94,48 +94,49 @@
 					}//for loop
 			});//response
 
-
-
-
-
-			//toggle animation
-			$(".gifDiv").on("click","img",function(){
-
-
-				// get class of clicked item. 
-				var classNum = $(this).attr('class');  // class name should be 0,1,2,3 etc
-				
-				// toggle animation
-				$.ajax ( { 
-						url: myUrl,  
-						method: "GET" 
-					} ).done(function(response) { 
-
-
-						// if data is "off", then turn "on" and animate
-						if ($("." + classNum).attr("data") == "off"){
-							// turn data on
-							$("." + classNum).attr("data","on");
-							// animate
-							$("." + classNum).attr("src",response.data[classNum].images.fixed_height.url);
-						}
-
-
-						//if data is "on", then turn "off" and pause
-						else if ($("." + classNum).attr("data") == "on"){
-							// turn data off
-							$("." + classNum).attr("data","off");
-							// animate still
-							$("." + classNum).attr("src",response.data[classNum].images.fixed_height_still.url);
-						}
-
-					})
-						
-
-			});//toggle
-
-
 		})//button
+
+
+
+// ==========================================
+
+
+		//toggle animation
+		$(".gifDiv").on("click","img",function(){
+
+			// get class of clicked item. 
+			var classNum = $(this).attr('class');  // class name should be 0,1,2,3 etc
+			
+			// toggle animation
+			$.ajax ( { 
+					url: myUrl,  
+					method: "GET" 
+				} ).done(function(response) { 
+
+					// if data is "off", then turn "on" and animate
+					if ($("." + classNum).attr("data") == "off"){
+						// turn data on
+						$("." + classNum).attr("data","on");
+						// animate
+						$("." + classNum).attr("src",response.data[classNum].images.fixed_height.url);
+					}
+
+
+					//if data is "on", then turn "off" and pause
+					else if ($("." + classNum).attr("data") == "on"){
+						// turn data off
+						$("." + classNum).attr("data","off");
+						// animate still
+						$("." + classNum).attr("src",response.data[classNum].images.fixed_height_still.url);
+					}
+
+				})
+					
+
+		});//toggle
+
+
+
 
 
 
