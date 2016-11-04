@@ -15,122 +15,127 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 	<script>
-		// link to API:  http://api.giphy.com/v1/gifs/search?q=funny+cat&api_key=dc6zaTOxFJmzC   
 // ==========================================
 
-		var myUrl;
+	// json link:  http://api.giphy.com/v1/gifs/search?q=funny+cat&api_key=dc6zaTOxFJmzC   
 
 // ==========================================
 
 		//make array
-		var myArray = ["cat","dog","funny"]
+		var topics = ["cat","dog","funny"]
 
 // ==========================================
 
-		// put button on screen using myArray
-		for (var i = 0; i < myArray.length; i++){
-			$(".bttnDiv").append("<button>" + myArray[i] + "</button>")
+		// put button on screen using topics
+		for (var i = 0; i < topics.length; i++){
+			$(".bttnDiv").append("<button>" + topics[i] + "</button>")
 		}
 
 // ==========================================
 
-		// add more stuff to array
+		// add more stuff to screen
 
 		// when user clicks on add a tag
 		$(".addBttn").on('click',function(){
 
-			var addTag = $(".inputTxt").val().split(" ").join("+") 
-				//converts 'funny cat' --> 'funny+cat'
-			
-			myArray.push(addTag);
+			// get text from input
+			var addTag = $(".inputTxt").val()
 
-			$(".bttnDiv").append("<button>" + addTag + "</button")
+			// put to topics array
+			topics.push(addTag);
+			
+			// empty bttnDiv
+			$(".bttnDiv").empty();
+
+			// put button on screen using topics
+			for (var i = 0; i < topics.length; i++){
+				$(".bttnDiv").append("<button>" + topics[i] + "</button>")
+			}
 		})
 
 
 // ==========================================
 
 
-
 		// onclick, change url name
 		$(".bttnDiv").on("click", "button", function(){
-
-			// get tag = cat, dog, funny
-			var tag = $(this).text();
 
 			// empty gif Div
 			$(".gifDiv").empty();
 
+			// get text from button (cat, dog, funny). call it tag
+			var tag = $(this).text();
+
+
 			// this is the dynamic url
-			myUrl = "http://api.giphy.com/v1/gifs/search?q=" + tag + "&api_key=dc6zaTOxFJmzC"
+			var myUrl = "http://api.giphy.com/v1/gifs/search?q=" + tag + "&api_key=dc6zaTOxFJmzC"
+
+
+			// display still images
+			$.ajax ( { 
+					url: myUrl,  
+					method: "GET" 
+				} ).done(function(response) { 
+
+					//makes 10 gifs
+					for (i = 0; i < 10; i++){
+
+						// append gifs
+						$(".gifDiv").append(
+							"<div class= gifAndRating>" +  	//div gifAndRating contains the gif and rating
+								"<img class=" + i + 		// each image has a class name of 1,2,3 etc.
+								" data='off' " +			// data off to toggle animation
+								" src=" + response.data[i].images.fixed_height_still.url + ">" +
+								"<br>" +
+								"ratingg: " + response.data[i].rating +
+							"</div>" +
+							"<hr>")
+
+					}//for loop
+			});//response
 
 
 
 
-				// display still images
+
+			//toggle animation
+			$(".gifDiv").on("click","img",function(){
+
+
+				// get class of clicked item. 
+				var classNum = $(this).attr('class');  // class name should be 0,1,2,3 etc
+				
+				// toggle animation
 				$.ajax ( { 
 						url: myUrl,  
 						method: "GET" 
 					} ).done(function(response) { 
 
-						//makes 10 gifs
-						for (i = 0; i < 10; i++){
 
-							$(".gifDiv").append(
-								"<div class=imageAndRating>" +
-									"<img class=" + i + 
-									" data='off' " +
-									" src=" + response.data[i].images.fixed_height_still.url + ">" +
-									"<br>" +
-									"ratingg: " + response.data[i].rating +
-								"</div>" +
-								"<hr>")
-
+						// if data is "off", then turn "on" and animate
+						if ($("." + classNum).attr("data") == "off"){
+							// turn data on
+							$("." + classNum).attr("data","on");
+							// animate
+							$("." + classNum).attr("src",response.data[classNum].images.fixed_height.url);
 						}
-				});
 
 
+						//if data is "on", then turn "off" and pause
+						else if ($("." + classNum).attr("data") == "on"){
+							// turn data off
+							$("." + classNum).attr("data","off");
+							// animate still
+							$("." + classNum).attr("src",response.data[classNum].images.fixed_height_still.url);
+						}
+
+					})
+						
+
+			});//toggle
 
 
-
-				//toggle animation
-				$(".gifDiv").on("click","img",function(){
-
-
-					// get class of clicked item. should be 0,1,2,3 etc
-					var classNum = $(this).attr('class');
-					
-					// toggle animation
-					$.ajax ( { 
-							url: myUrl,  
-							method: "GET" 
-						} ).done(function(response) { 
-
-
-							// if data is "off", then turn "on" and animate
-							if ($("." + classNum).attr("data") == "off"){
-								// turn data on
-								$("." + classNum).attr("data","on");
-								// animate
-								$("." + classNum).attr("src",response.data[classNum].images.fixed_height.url);
-							}
-
-
-							//if data is "on", then turn "off" and pause
-							else if ($("." + classNum).attr("data") == "on"){
-								// turn data off
-								$("." + classNum).attr("data","off");
-								// stop animation
-								$("." + classNum).attr("src",response.data[classNum].images.fixed_height_still.url);
-							}
-
-						})
-							
-
-				});//toggle
-
-
-})//button
+		})//button
 
 
 
